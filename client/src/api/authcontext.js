@@ -10,7 +10,7 @@ console.log(VITE_SERVER_URL)
 
 export const postRegisterData = async (userData) =>{
 
-    const res = await axios.post(`${VITE_SERVER_URL}auth/register`, userData)
+    const res = await axios.post(`${VITE_SERVER_URL}/auth/register`, userData)
     return  res.data;
 }
 
