@@ -1,6 +1,7 @@
 import dotenv from "dotenv"
 import app from "./src/app.js";
 import sequelize from "./src/database/dbConfig.js";
+import { associationsModel } from "./src/models/associations.js";
 
 
 dotenv.config();
@@ -16,7 +17,7 @@ const runServer = async ()=>{
 
             await sequelize.authenticate()
             console.log("\n DATABASE CONNECTED \n")
-
+            associationsModel ()
             await sequelize.sync()
             console.info("database tables created ...  ")
         app.listen(PORT, ()=>{
