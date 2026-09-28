@@ -10,7 +10,6 @@ import { userAuthMiddleware } from "../middleware/userAuthMiddleware.js";
 import { UserProtectedController } from "../controllers/user.controller.protected.js";
 
 
-
 const router = Router();
 
 router.get("/", (_,res)=> res.status(200).json({meesage: "success"}))
@@ -21,5 +20,9 @@ router.post("/login", schemaValidation(loginSchema), userLoginController)
 router.post("/logout",userAuthMiddleware, userLogoutController )
 
 router.get("/me", userAuthMiddleware,UserProtectedController )
+
+
+
+
 
 export default router;

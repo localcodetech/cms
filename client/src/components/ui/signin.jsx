@@ -4,6 +4,7 @@ import useApi from '../../hooks/useAPI';
 import { postLoginUser } from '../../api/authcontext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 
 
 const SignIN = () => {
@@ -59,6 +60,14 @@ const userInfo = ()=>{
 }
 // 
 
+ const { login } = useAuth();
+
+useEffect(() => {
+  if (data) {
+    login(data.data);
+    navigate("/");
+  }
+}, [data, navigate, login]);
 
 
   return (
