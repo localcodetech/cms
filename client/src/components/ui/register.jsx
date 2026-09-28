@@ -1,289 +1,191 @@
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import useApi from "../../hooks/useAPI";
+import { postRegisterData } from "../../api/authcontext";
+import Loader from "../common/loading";
 
-import { useEffect, useState } from 'react';
-import styled from 'styled-components';
+const Field = ({ id, label, type = "text", value, onChange, right }) => (
+  <div className="relative">
+    <input
+      id={id}
+      type={type}
+      value={value}
+      onChange={onChange}
+      required
+      placeholder=" "
+      className="peer w-full rounded-xl border border-white/10 bg-white/5 px-4 pb-2 pt-6 text-sm text-white outline-none transition
+                 focus:border-fuchsia-400/70 focus:bg-white/10 focus:ring-4 focus:ring-fuchsia-500/10"
+    />
+    <label
+      htmlFor={id}
+      className="pointer-events-none absolute left-4 top-4 origin-left text-sm text-white/40 transition-all
+                 peer-focus:top-2 peer-focus:text-[11px] peer-focus:font-semibold peer-focus:text-fuchsia-300
+                 peer-[:not(:placeholder-shown)]:top-2 peer-[:not(:placeholder-shown)]:text-[11px]"
+    >
+      {label}
+    </label>
+    {right}
+  </div>
+);
 
-// import IncorrectPasswordCard from '../common/wrongpassword';
-import useApi from '../../hooks/useAPI';
-import { postRegisterData } from '../../api/authcontext';
-import { useNavigate } from 'react-router-dom';
-import Loader from '../common/loading';
-
-
-
-
-
-
-const Register =  () => {
-
-
-
-
-   let navigate = useNavigate();
-const {execute, loading, error, data} = useApi(postRegisterData)
-
-
-
-
-    const [detail, setDetail] = useState({
-        firstname : "",
-        lastname : "",
-        username : "",
-        email : "",
-        password : "",
-        confirmPassword: ""
-    })
-
-
-
-const formhandler = (e) =>{
-    const {id, value} = e.target
-
-    if (id === "firstname") setDetail((prev)=>({...prev, firstname: value}))
-    
-    else if (id === "lastname") setDetail((prev)=>({...prev, lastname: value}))
-    else if (id === "username") setDetail(prev=>({...prev, username: value}))
-    else if (id === "password") setDetail(prev=>({...prev, password: value}))
-    else if (id === "confirmPassword")  setDetail(prev=>({...prev, confirmPassword: value}))
-    else if (id === "email")setDetail(prev=>({...prev, email: value}))
-        else return null
-}  
-
-
-
-
-const formDataObject = ()=>{
-  if (detail.password === detail.confirmPassword){
-
-     const sanitise = {
-      firstname : detail.firstname,
-      lastname: detail.lastname,
-      username : detail.username,
-      email: detail.email,
-      password : detail.confirmPassword
-    };
-    return sanitise
-  } 
+const strengthOf = (pw) => {
+  let score = 0;
+  if (pw.length >= 6) score++;
+  if (pw.length >= 10) score++;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+  if (/\d/.test(pw) && /[^A-Za-z0-9]/.test(pw)) score++;
+  return score; // 0..4
 };
 
+const Register = () => {
+  const navigate = useNavigate();
+  const { execute, loading, error, data } = useApi(postRegisterData);
 
+  const [detail, setDetail] = useState({
+    firstname: "",
+    lastname: "",
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [showPw, setShowPw] = useState(false);
+  const [localError, setLocalError] = useState(null);
 
-const submitForm = (e)=>{
-  e.preventDefault();
+  // id of each input matches the key in state, so one handler is enough
+  const formhandler = (e) => {
+    const { id, value } = e.target;
+    setLocalError(null);
+    setDetail((prev) => ({ ...prev, [id]: value }));
+  };
 
-  const dataObject = formDataObject()
-  if (!dataObject){
-    return
-  }
-    execute(dataObject)
+  const submitForm = (e) => {
+    e.preventDefault();
 
-}
-
-const userInfo = ()=>{
-
-  if (error){
-    return error
-  } else if (data){
-    return data.message
-  }else 
-    return "sign up now"
-
-}
-
-
-useEffect (()=>{
-    if (data){
-      navigate('/login')
+    if (detail.password !== detail.confirmPassword) {
+      setLocalError("Passwords do not match");
+      return;
     }
-},[data, navigate])
 
+    const { confirmPassword, ...dataObject } = detail;
+    execute(dataObject);
+  };
 
+  useEffect(() => {
+    if (data) navigate("/login");
+  }, [data, navigate]);
+
+  const message = localError || error;
+  const strength = strengthOf(detail.password);
+  const strengthColors = ["bg-white/10", "bg-red-400", "bg-orange-400", "bg-yellow-400", "bg-emerald-400"];
+  const strengthLabels = ["", "Weak", "Fair", "Good", "Strong"];
 
   return (
-    <StyledWrapper>
-      <form className="form" onSubmit={submitForm}>
-        <p className="title">Register</p>
-        <p className="message">{userInfo()}</p>
-        
-        <div className="flex">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#07070c] px-4 py-10">
+      {/* background glow */}
+      <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-fuchsia-600/30 blur-[120px]" />
+      <div className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-indigo-600/30 blur-[120px]" />
 
-
-          <label>
-            <input required placeholder="" type="text" className="input" id='firstname' value={detail.firstname} onChange={formhandler} />
-            <span>Firstname</span>
-          </label>
-
-          <label>
-            <input required placeholder="" type="text" className="input"  id='lastname' value={detail.lastname} onChange={formhandler}/>
-            <span>Lastname</span>
-          </label>
-
+      <div className="relative grid w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-white/3 shadow-2xl backdrop-blur-xl md:grid-cols-2">
+        {/* brand panel */}
+        <div className="relative hidden flex-col justify-between bg-gradient-to-br from-fuchsia-600 via-purple-700 to-indigo-800 p-10 md:flex">
+          <div className="text-lg font-bold tracking-tight text-white">BlogCMS</div>
+          <div>
+            <h2 className="text-4xl font-bold leading-tight text-white">
+              Write. Publish.
+              <br />
+              Own your story.
+            </h2>
+            <p className="mt-4 max-w-sm text-sm text-white/70">
+              Create drafts, publish when you're ready, and manage everything from one clean dashboard.
+            </p>
+          </div>
+          <ul className="space-y-2 text-sm text-white/80">
+            <li>✓ Draft and publish workflow</li>
+            <li>✓ Your posts, your control</li>
+            <li>✓ Secure login with token protection</li>
+          </ul>
         </div>
-        <label>
-          <input required placeholder="" type="text" className="input"  id='username' value={detail.username} onChange={formhandler}/>
-          <span>Username</span>
-        </label>
 
-        <label>
-          <input required placeholder ="" type="email" className="input" id='email' value={detail.email} onChange={formhandler}/>
-          <span>Email</span>
-        </label>
+        {/* form panel */}
+        <form onSubmit={submitForm} className="flex flex-col gap-4 p-8 sm:p-10">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-white">Create account</h1>
+            <p className="mt-1 text-sm text-white/50">Join in less than a minute.</p>
+          </div>
 
-        <label>
-          <input required placeholder="" type="password" className="input"  id='password' value={detail.password} onChange={formhandler} />
-          <span>Password</span>
-        </label>
+          {message && (
+            <div role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+              {message}
+            </div>
+          )}
 
-        <label>
-          <input required placeholder="" type="password" className="input" id='confirmPassword' value={detail.confirmPassword} onChange={formhandler} />
-          <span>Confirm password</span>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field id="firstname" label="First name" value={detail.firstname} onChange={formhandler} />
+            <Field id="lastname" label="Last name" value={detail.lastname} onChange={formhandler} />
+          </div>
 
-        </label>
-        <button className="submit"  disabled={loading}>{loading ? <Loader />: "submit"}</button>
-        <p className="signin">Already have an acount ? <a href="/login">Signin</a></p>
-      </form>
-    </StyledWrapper>
+          <Field id="username" label="Username" value={detail.username} onChange={formhandler} />
+          <Field id="email" label="Email" type="email" value={detail.email} onChange={formhandler} />
+
+          <Field
+            id="password"
+            label="Password"
+            type={showPw ? "text" : "password"}
+            value={detail.password}
+            onChange={formhandler}
+            right={
+              <button
+                type="button"
+                onClick={() => setShowPw((s) => !s)}
+                className="absolute right-4 top-4 text-xs font-medium text-white/40 hover:text-white"
+              >
+                {showPw ? "Hide" : "Show"}
+              </button>
+            }
+          />
+
+          {detail.password && (
+            <div className="-mt-2">
+              <div className="flex gap-1.5">
+                {[1, 2, 3, 4].map((i) => (
+                  <div
+                    key={i}
+                    className={`h-1 flex-1 rounded-full transition-colors ${i <= strength ? strengthColors[strength] : "bg-white/10"}`}
+                  />
+                ))}
+              </div>
+              <p className="mt-1 text-xs text-white/40">{strengthLabels[strength]}</p>
+            </div>
+          )}
+
+          <Field
+            id="confirmPassword"
+            label="Confirm password"
+            type={showPw ? "text" : "password"}
+            value={detail.confirmPassword}
+            onChange={formhandler}
+          />
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="mt-2 flex h-12 items-center justify-center rounded-xl bg-gradient-to-r from-fuchsia-500 to-indigo-500 text-sm font-semibold text-white
+                       shadow-lg shadow-fuchsia-500/20 transition hover:brightness-110 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? <Loader /> : "Create account"}
+          </button>
+
+          <p className="text-center text-sm text-white/50">
+            Already have an account?{" "}
+            <Link to="/login" className="font-medium text-fuchsia-300 hover:text-fuchsia-200 hover:underline">
+              Sign in
+            </Link>
+          </p>
+        </form>
+      </div>
+    </div>
   );
-}
-
-const StyledWrapper = styled.div`
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-width: 350px;
-    padding: 20px;
-    border-radius: 20px;
-    position: relative;
-    background-color: whitesmoke;
-    color: #212121;
-    border: 1px solid #333;
-  }
-
-  .title {
-    font-size: 28px;
-    font-weight: 600;
-    letter-spacing: -1px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding-left: 30px;
-    color: #d30073;
-  }
-
-  .title::before {
-    width: 18px;
-    height: 18px;
-  }
-
-  .title::after {
-    width: 18px;
-    height: 18px;
-    animation: pulse 1s linear infinite;
-  }
-
-  .title::before,
-  .title::after {
-    position: absolute;
-    content: "";
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    left: 0px;
-    background-color: #d30073;
-  }
-
-  .message,
-  .signin {
-    font-size: 14.5px;
-    color: #333;
-  }
-
-  .signin {
-    text-align: center;
-  }
-
-  .signin a:hover {
-    text-decoration: underline green;
-  }
-
-  .signin a {
-    color: #d30073;
-  }
-
-  .flex {
-    display: flex;
-    width: 100%;
-    gap: 6px;
-  }
-
-  .form label {
-    position: relative;
-  }
-
-  .form label .input {
-    background-color: #333;
-    color: #fff;
-    width: 100%;
-    padding: 20px 05px 05px 10px;
-    outline: 0;
-    border: 1px solid rgba(105, 105, 105, 0.397);
-    border-radius: 10px;
-  }
-
-  .form label .input + span {
-    color: rgba(255, 255, 255, 0.5);
-    position: absolute;
-    left: 10px;
-    top: 0px;
-    font-size: 0.9em;
-    cursor: text;
-    transition: 0.3s ease;
-  }
-
-  .form label .input:placeholder-shown + span {
-    top: 12.5px;
-    font-size: 0.9em;
-  }
-
-  .form label .input:focus + span,
-  .form label .input:valid + span {
-    color: #d30073;
-    top: 0px;
-    font-size: 0.7em;
-    font-weight: 600;
-  }
-
-  .input {
-    font-size: medium;
-  }
-
-  .submit {
-    border: none;
-    outline: none;
-    padding: 10px;
-    border-radius: 10px;
-    color: #d30073;
-    font-size: 16px;
-    transform: 0.3s ease;
-    background-color: whitesmoke;
-    border: 1px solid #d30073;
-  }
-
-  .submit:hover {
-    background-color: #d30073;
-    color: whitesmoke;
-  }
-
-  @keyframes pulse {
-    from {
-      transform: scale(0.9);
-      opacity: 1;
-    }
-
-    to {
-      transform: scale(1.8);
-      opacity: 0;
-    }
-  }`;
+};
 
 export default Register;
