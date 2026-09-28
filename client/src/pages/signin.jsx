@@ -1,13 +1,10 @@
+// src/pages/signin.jsx
 import SignIN from "../components/ui/signin";
 
-const SignIn = () => {
-
- 
-  return (
-    <div className="h-dvh  w-full flex items-center justify-center ">
-      <SignIN />
-    </div>
-  );
-};
+const SignIn = () => (
+  <div className="flex min-h-[calc(100vh-4rem)] w-full items-center justify-center px-4 py-8">
+    <SignIN />
+  </div>
+);
 
 export default SignIn;
