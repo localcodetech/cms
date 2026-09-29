@@ -19,6 +19,12 @@ app.use("/api/auth", router)
 
 app.get("/",(req,res)=>{res.status(200).json({message: "ok"})})
 
+// anything thrown past a route/middleware: JSON instead of Express's HTML page
+app.use((err, req, res, next) => {
+    console.error(err)
+    res.status(err.status || 500).json({ error: err.message || "internal server error" })
+})
+
 
 
 export default app;

@@ -22,7 +22,14 @@ export const userAuthMiddleware = async(req, res, next) =>{
         return res.status(401).json({message:"unauthorized"})
     }
 
-    const isBlackListed = await isTokenblackListed(token)
+    let isBlackListed
+    try {
+        isBlackListed = await isTokenblackListed(token)
+    } catch (error) {
+        // redis down or misconfigured: fail closed, but say why instead of an HTML 500
+        console.error("token blacklist check failed:", error.message)
+        return res.status(503).json({message: "auth service unavailable"})
+    }
 
     if (isBlackListed) return res.status(401).json({message: "unauthorized"})
 

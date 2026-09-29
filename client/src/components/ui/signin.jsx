@@ -22,7 +22,7 @@ const Field = ({ id, label, type = "text", value, onChange, right }) => (
       htmlFor={id}
       className="pointer-events-none absolute left-4 top-4 origin-left text-sm text-white/40 transition-all
                  peer-focus:top-2 peer-focus:text-[11px] peer-focus:font-semibold peer-focus:text-fuchsia-300
-                 peer-[:not(:placeholder-shown)]:top-2 peer-[:not(:placeholder-shown)]:text-[11px]"
+                 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[11px]"
     >
       {label}
     </label>
@@ -62,7 +62,7 @@ const SignIN = () => {
       <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-fuchsia-600/30 blur-[120px]" />
       <div className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-indigo-600/30 blur-[120px]" />
 
-      <div className="relative grid w-full max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] shadow-2xl backdrop-blur-xl md:grid-cols-2">
+      <div className="relative grid w-full max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-white/3 shadow-2xl backdrop-blur-xl md:grid-cols-2">
         {/* brand panel */}
         <div className="hidden flex-col justify-between bg-gradient-to-br from-indigo-700 via-purple-700 to-fuchsia-600 p-10 md:flex">
           <div className="text-lg font-bold tracking-tight text-white">BlogCMS</div>
