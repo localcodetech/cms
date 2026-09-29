@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import useApi from "../hooks/useAPI";
 import { getMyPosts, deletePost } from "../api/postApi";
 import { useAuth } from "../context/AuthContext";
+import { AnimatePresence, motion } from "framer-motion";
+import { ease } from "../lib/motion";
 
 const primaryBtn =
   "rounded-xl bg-gradient-to-r from-fuchsia-500 to-indigo-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/20 transition hover:brightness-110";
@@ -62,7 +64,7 @@ export default function MyPosts() {
               className={`rounded-2xl border p-4 text-left transition ${
                 tab === t
                   ? "border-fuchsia-400/40 bg-fuchsia-500/10"
-                  : "border-white/10 bg-white/[0.03] hover:bg-white/[0.05]"
+                  : "border-white/10 bg-white/3 hover:bg-white/3"
               }`}
             >
               <p className="text-2xl font-bold">{list.loading && !list.data ? "–" : counts[t]}</p>
@@ -84,7 +86,7 @@ export default function MyPosts() {
         <div className="mt-6 grid gap-3">
           {list.loading && !list.data &&
             Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-20 animate-pulse rounded-2xl border border-white/10 bg-white/[0.03]" />
+              <div key={i} className="h-20 animate-pulse rounded-2xl border border-white/10 bg-white/3" />
             ))}
 
           {list.data && visible.length === 0 && (
@@ -98,19 +100,24 @@ export default function MyPosts() {
             </div>
           )}
 
-          {visible.map((p) => {
+          <AnimatePresence initial={false} mode="popLayout">
+          {visible.map((p, i) => {
             const deleting = del.loading && deletingId === p.id;
             return (
-              <div
+              <motion.div
                 key={p.id}
-                className={`flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition hover:border-white/20 ${
+                layout
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0, transition: { duration: 0.35, ease, delay: Math.min(i, 8) * 0.04 } }}
+                exit={{ opacity: 0, x: -24, transition: { duration: 0.25 } }}
+                className={`flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-white/3 p-4 transition-colors hover:border-white/20 ${
                   deleting ? "opacity-50" : ""
                 }`}
               >
                 {p.coverImage ? (
                   <img src={p.coverImage} alt="" className="h-14 w-14 rounded-xl object-cover" />
                 ) : (
-                  <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-fuchsia-600/30 to-indigo-600/30" />
+                  <div className="h-14 w-14 rounded-xl bg-linear-to-br from-fuchsia-600/30 to-indigo-600/30" />
                 )}
 
                 <div className="min-w-0 flex-1">
@@ -168,9 +175,10 @@ export default function MyPosts() {
                     </>
                   )}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
+          </AnimatePresence>
         </div>
       </div>
     </div>

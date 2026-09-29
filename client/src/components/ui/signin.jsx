@@ -64,7 +64,7 @@ const SignIN = () => {
 
       <div className="relative grid w-full max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-white/3 shadow-2xl backdrop-blur-xl md:grid-cols-2">
         {/* brand panel */}
-        <div className="hidden flex-col justify-between bg-gradient-to-br from-indigo-700 via-purple-700 to-fuchsia-600 p-10 md:flex">
+        <div className="hidden flex-col justify-between bg-linear-to-br from-indigo-700 via-purple-700 to-fuchsia-600 p-10 md:flex">
           <div className="text-lg font-bold tracking-tight text-white">
             BlogCMS
           </div>
@@ -131,7 +131,7 @@ const SignIN = () => {
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 flex h-12 items-center justify-center rounded-xl bg-gradient-to-r from-fuchsia-500 to-indigo-500 text-sm font-semibold text-white
+            className="mt-2 flex h-12 items-center justify-center rounded-xl bg-linear-to-r from-fuchsia-500 to-indigo-500 text-sm font-semibold text-white
                        shadow-lg shadow-fuchsia-500/20 transition hover:brightness-110 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? <Loader /> : "Sign in"}

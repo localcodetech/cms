@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useApi from "../hooks/useAPI";
 import { getPublishedPosts } from "../api/postApi";
+import { motion } from "framer-motion";
+import { fadeUp, lift, stagger } from "../lib/motion";
+
+const MotionLink = motion.create(Link);
 
 const formatDate = (value) =>
   value ? new Date(value).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : null;
@@ -13,7 +17,7 @@ function Cover({ src, className }) {
   return src ? (
     <img src={src} alt="" className={`w-full object-cover transition duration-300 group-hover:scale-[1.03] ${className}`} />
   ) : (
-    <div className={`w-full bg-gradient-to-br from-fuchsia-600/30 to-indigo-600/30 ${className}`} />
+    <div className={`w-full bg-linear-to-br from-fuchsia-600/30 to-indigo-600/30 ${className}`} />
   );
 }
 
@@ -51,7 +55,7 @@ export default function Posts() {
           </span>
           <h1 className="mt-6 text-4xl font-bold tracking-tight sm:text-5xl">
             Stories from{" "}
-            <span className="bg-gradient-to-r from-fuchsia-400 to-indigo-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-fuchsia-400 to-indigo-400 bg-clip-text text-transparent">
               our writers
             </span>
           </h1>
@@ -71,7 +75,7 @@ export default function Posts() {
         {loading && (
           <div className="grid gap-4 md:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="animate-pulse overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
+              <div key={i} className="animate-pulse overflow-hidden rounded-2xl border border-white/10 bg-white/3">
                 <div className="h-40 bg-white/5" />
                 <div className="space-y-2 p-4">
                   <div className="h-4 w-2/3 rounded bg-white/10" />
@@ -98,9 +102,13 @@ export default function Posts() {
 
         {/* featured post */}
         {!loading && featured && (
-          <Link
+          <MotionLink
+            key={`featured-${featured.id}`}
+            variants={fadeUp}
+            initial="hidden"
+            animate="show"
             to={`/posts/${featured.id}`}
-            className="group mb-6 grid overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] transition hover:border-fuchsia-400/30 md:grid-cols-2"
+            className="group mb-6 grid overflow-hidden rounded-3xl border border-white/10 bg-white/3 transition-colors hover:border-fuchsia-400/30 md:grid-cols-2"
           >
             <div className="overflow-hidden">
               <Cover src={featured.coverImage} className="h-56 md:h-full md:min-h-72" />
@@ -116,17 +124,25 @@ export default function Posts() {
               <Meta post={featured} />
               <span className="text-sm text-fuchsia-300">Read post →</span>
             </div>
-          </Link>
+          </MotionLink>
         )}
 
         {/* the rest */}
         {!loading && rest.length > 0 && (
-          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+          <motion.div
+            key={query}
+            variants={stagger(0.06, 0.1)}
+            initial="hidden"
+            animate="show"
+            className="grid gap-4 sm:grid-cols-2 md:grid-cols-3"
+          >
             {rest.map((p) => (
-              <Link
+              <MotionLink
+                variants={fadeUp}
+                whileHover={lift}
                 key={p.id}
                 to={`/posts/${p.id}`}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] transition hover:-translate-y-0.5 hover:border-fuchsia-400/30"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/3 transition-colors hover:border-fuchsia-400/30"
               >
                 <div className="overflow-hidden">
                   <Cover src={p.coverImage} className="h-40" />
@@ -136,9 +152,9 @@ export default function Posts() {
                   <p className="line-clamp-2 flex-1 text-sm text-white/50">{p.content}</p>
                   <Meta post={p} />
                 </div>
-              </Link>
+              </MotionLink>
             ))}
-          </div>
+          </motion.div>
         )}
       </section>
     </div>
