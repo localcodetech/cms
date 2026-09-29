@@ -20,6 +20,7 @@ router.get("/:id", getPostByIdController);
 
 // owner only
 router.put("/:id", userAuthMiddleware, checkPostOwnership, schemaValidation(updatePostSchema), updatePostController);
+
 router.delete("/:id", userAuthMiddleware, checkPostOwnership, deletePostController);
 
 export default router;
