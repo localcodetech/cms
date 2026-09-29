@@ -28,13 +28,13 @@ export const findPostByID = async (id) =>{
 
 // read post by  userId in relation user.id
 export const findPostByUserId = async (userId) => {
-    return await BlogPost.findAll({where: {userId: userId}})
+    return await BlogPost.findAll({where: {userId: userId}, order: [["updatedAt", "DESC"]]})
 }
 
 
 // read posts according to status
 export const findAllPostByStatus = async (status) =>{
-    return await BlogPost.findAll({where: {status: status}})
+    return await BlogPost.findAll({where: {status: status}, order: [["createdAt", "DESC"]]})
 }
 
 

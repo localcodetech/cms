@@ -164,8 +164,8 @@ export default function PostEditor() {
                     placeholder="Write your story... (min 10 characters)"
                     required
                     minLength={10}
-                    rows={14}
-                    className={`${field} resize-y leading-7`}
+                    rows={6}
+                    className={`${field} max-h-96 resize-y leading-6`}
                   />
                 </div>
               </div>
