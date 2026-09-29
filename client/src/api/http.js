@@ -1,7 +1,9 @@
 // src/api/http.js
 import axios from "axios";
 
-const http = axios.create({ baseURL: import.meta.env.VITE_API_URL });
+const http = axios.create({
+  baseURL: import.meta.env.VITE_SERVER_URL || "https://cms-t9bk.onrender.com/api",
+});
 
 http.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");

@@ -19,7 +19,9 @@ const useApi = (asyncfunct) =>{
                         setData(user);
 
                     }catch(error){
-                        setError(error.response?.data?.error || error.message);
+                        const body = error.response?.data;
+                        const msg = body?.error || body?.message;
+                        setError(Array.isArray(msg) ? msg.map((i) => i.message).join(", ") : msg || error.message);
 
                     }finally {
                         setLoading(false);
