@@ -1,8 +1,8 @@
 
 import axios from "axios"
-const {VITE_SERVER_URL} = import.meta.env
+// const {VITE_SERVER_URL} = import.meta.env
 
-console.log(VITE_SERVER_URL)
+const VITE_SERVER_URL = "https://cms-t9bk.onrender.com/api"
 
 
 
