@@ -13,6 +13,7 @@ const useApi = (asyncfunct) =>{
 
             const execute = async (...args) =>{
                     setLoading(true);
+                    setError(null);
 
                     try{
                         const user = await asyncfunct(...args)

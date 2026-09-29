@@ -22,7 +22,7 @@ const Field = ({ id, label, type = "text", value, onChange, right }) => (
       htmlFor={id}
       className="pointer-events-none absolute left-4 top-4 origin-left text-sm text-white/40 transition-all
                  peer-focus:top-2 peer-focus:text-[11px] peer-focus:font-semibold peer-focus:text-fuchsia-300
-                 peer-[:not(:placeholder-shown)]:top-2 peer-[:not(:placeholder-shown)]:text-[11px]"
+                 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-[11px]"
     >
       {label}
     </label>
@@ -62,10 +62,12 @@ const SignIN = () => {
       <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-fuchsia-600/30 blur-[120px]" />
       <div className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-indigo-600/30 blur-[120px]" />
 
-      <div className="relative grid w-full max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] shadow-2xl backdrop-blur-xl md:grid-cols-2">
+      <div className="relative grid w-full max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-white/3 shadow-2xl backdrop-blur-xl md:grid-cols-2">
         {/* brand panel */}
         <div className="hidden flex-col justify-between bg-gradient-to-br from-indigo-700 via-purple-700 to-fuchsia-600 p-10 md:flex">
-          <div className="text-lg font-bold tracking-tight text-white">BlogCMS</div>
+          <div className="text-lg font-bold tracking-tight text-white">
+            BlogCMS
+          </div>
           <div>
             <h2 className="text-4xl font-bold leading-tight text-white">
               Welcome
@@ -76,23 +78,38 @@ const SignIN = () => {
               Pick up where you left off. Your drafts are waiting.
             </p>
           </div>
-          <p className="text-xs text-white/50">Secure sign-in with token protection.</p>
+          <p className="text-xs text-white/50">
+            Secure sign-in with token protection.
+          </p>
         </div>
 
         {/* form panel */}
         <form onSubmit={submitForm} className="flex flex-col gap-4 p-8 sm:p-10">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-white">Sign in</h1>
-            <p className="mt-1 text-sm text-white/50">Enter your details to continue.</p>
+            <h1 className="text-3xl font-bold tracking-tight text-white">
+              Sign in
+            </h1>
+            <p className="mt-1 text-sm text-white/50">
+              Enter your details to continue.
+            </p>
           </div>
 
           {error && (
-            <div role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            <div
+              role="alert"
+              className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300"
+            >
               {error}
             </div>
           )}
 
-          <Field id="email" label="Email" type="email" value={userData.email} onChange={formhandler} />
+          <Field
+            id="email"
+            label="Email"
+            type="email"
+            value={userData.email}
+            onChange={formhandler}
+          />
 
           <Field
             id="password"
@@ -122,7 +139,10 @@ const SignIN = () => {
 
           <p className="text-center text-sm text-white/50">
             Don't have an account?{" "}
-            <Link to="/register" className="font-medium text-fuchsia-300 hover:text-fuchsia-200 hover:underline">
+            <Link
+              to="/register"
+              className="font-medium text-fuchsia-300 hover:text-fuchsia-200 hover:underline"
+            >
               Sign up
             </Link>
           </p>
