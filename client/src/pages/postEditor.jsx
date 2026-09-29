@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useApi from "../hooks/useAPI";
 import { createPost, updatePost, getMyPosts } from "../api/postApi";
+import { AnimatePresence, motion } from "framer-motion";
 
 const field =
   "w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/30 outline-none transition focus:border-fuchsia-400/50 focus:bg-white/[0.07]";
@@ -68,7 +69,7 @@ export default function PostEditor() {
           )}
 
           {(notFound || (id && mine.error)) && (
-            <div className="mt-10 rounded-3xl border border-white/10 bg-white/[0.03] p-10 text-center">
+            <div className="mt-10 rounded-3xl border border-white/10 bg-white/3 p-10 text-center">
               <h1 className="text-2xl font-bold">Post not found</h1>
               <p className="mt-2 text-sm text-white/50">
                 {mine.error || "It doesn't exist, or it isn't yours to edit."}
@@ -111,7 +112,7 @@ export default function PostEditor() {
                 </div>
               )}
 
-              <div className="mt-6 grid gap-6 rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
+              <div className="mt-6 grid gap-6 rounded-3xl border border-white/10 bg-white/3 p-6 sm:p-8">
                 <div>
                   <label htmlFor="title" className={label}>Title</label>
                   <input
@@ -138,14 +139,21 @@ export default function PostEditor() {
                     placeholder="https://..."
                     className={field}
                   />
+                  <AnimatePresence>
                   {form.coverImage && !imgBroken && (
-                    <img
+                    <motion.img
+                      key={form.coverImage}
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.98 }}
+                      transition={{ duration: 0.25 }}
                       src={form.coverImage}
                       alt=""
                       onError={() => setImgBroken(true)}
                       className="mt-3 max-h-56 w-full rounded-xl border border-white/10 object-cover"
                     />
                   )}
+                  </AnimatePresence>
                   {form.coverImage && imgBroken && (
                     <p className="mt-2 text-xs text-amber-300/80">Couldn't load a preview for this URL.</p>
                   )}
@@ -179,7 +187,7 @@ export default function PostEditor() {
                 </Link>
                 <button
                   disabled={save.loading}
-                  className="rounded-xl bg-gradient-to-r from-fuchsia-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/20 transition hover:brightness-110 disabled:opacity-50"
+                  className="rounded-xl bg-linear-to-r from-fuchsia-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/20 transition hover:brightness-110 disabled:opacity-50"
                 >
                   {save.loading ? "Saving..." : form.status === "published" ? "Publish" : "Save draft"}
                 </button>

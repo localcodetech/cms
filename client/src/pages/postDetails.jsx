@@ -4,6 +4,8 @@ import { Link, useParams } from "react-router-dom";
 import useApi from "../hooks/useAPI";
 import { getPublishedPost } from "../api/postApi";
 import { useAuth } from "../context/AuthContext";
+import { motion } from "framer-motion";
+import { fadeUp, stagger } from "../lib/motion";
 
 const formatDate = (value) =>
   value ? new Date(value).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" }) : null;
@@ -43,13 +45,13 @@ export default function PostDetail() {
           )}
 
           {!loading && error && (
-            <div className="mt-16 rounded-3xl border border-white/10 bg-white/[0.03] p-10 text-center">
+            <div className="mt-16 rounded-3xl border border-white/10 bg-white/3 p-10 text-center">
               <p className="text-5xl">🔍</p>
               <h1 className="mt-4 text-2xl font-bold">Post not found</h1>
               <p className="mt-2 text-sm text-white/50">It may be a draft, or it was removed.</p>
               <Link
                 to="/posts"
-                className="mt-6 inline-block rounded-xl bg-gradient-to-r from-fuchsia-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/20 transition hover:brightness-110"
+                className="mt-6 inline-block rounded-xl bg-gradient-lr from-fuchsia-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/20 transition hover:brightness-110"
               >
                 Browse posts
               </Link>
@@ -57,8 +59,8 @@ export default function PostDetail() {
           )}
 
           {!loading && post && (
-            <article className="mt-10">
-              <header>
+            <motion.article variants={stagger(0.1)} initial="hidden" animate="show" className="mt-10">
+              <motion.header variants={fadeUp}>
                 <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl">{post.title}</h1>
                 <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-white/40">
                   {date && <span>{date}</span>}
@@ -73,27 +75,28 @@ export default function PostDetail() {
                     </Link>
                   )}
                 </div>
-              </header>
+              </motion.header>
 
               {post.coverImage ? (
-                <img
+                <motion.img
+                  variants={fadeUp}
                   src={post.coverImage}
                   alt=""
-                  className="mt-8 max-h-[28rem] w-full rounded-3xl border border-white/10 object-cover"
+                  className="mt-8 max-h-112 w-full rounded-3xl border border-white/10 object-cover"
                 />
               ) : (
-                <div className="mt-8 h-2 w-24 rounded-full bg-gradient-to-r from-fuchsia-500 to-indigo-500" />
+                <motion.div variants={fadeUp} className="mt-8 h-2 w-24 rounded-full bg-linear-to-r from-fuchsia-500 to-indigo-500" />
               )}
 
-              <div className="mt-10 whitespace-pre-wrap text-lg leading-8 text-white/75">{post.content}</div>
+              <motion.div variants={fadeUp} className="mt-10 whitespace-pre-wrap text-lg leading-8 text-white/75">{post.content}</motion.div>
 
-              <footer className="mt-16 rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center">
+              <motion.footer variants={fadeUp} className="mt-16 rounded-3xl border border-white/10 bg-white/3 p-8 text-center">
                 <h2 className="text-xl font-semibold">Enjoyed this post?</h2>
                 <p className="mt-1 text-sm text-white/50">There's more where that came from.</p>
                 <div className="mt-6 flex flex-wrap justify-center gap-3">
                   <Link
                     to="/posts"
-                    className="rounded-xl bg-gradient-to-r from-fuchsia-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/20 transition hover:brightness-110"
+                    className="rounded-xl bg-linear-to-r from-fuchsia-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/20 transition hover:brightness-110"
                   >
                     Read more posts
                   </Link>
@@ -104,8 +107,8 @@ export default function PostDetail() {
                     Write your own
                   </Link>
                 </div>
-              </footer>
-            </article>
+              </motion.footer>
+            </motion.article>
           )}
         </div>
       </div>
