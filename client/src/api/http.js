@@ -11,4 +11,15 @@ http.interceptors.request.use((config) => {
   return config;
 });
 
+// expired/revoked token: let AuthContext log the user out instead of leaving them stuck
+http.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    if (error.response?.status === 401 && localStorage.getItem("token")) {
+      window.dispatchEvent(new Event("auth:expired"));
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default http;
