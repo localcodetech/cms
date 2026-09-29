@@ -16,5 +16,5 @@ export const updatePostSchema = zod.object({
     content : zod.string().trim().min(10).optional(),
     status: zod.enum(["draft", "published"]).optional(),
     coverImage: zod.url().optional()
-}).refine()
+}).refine((data) => Object.keys(data).length > 0, { message: "nothing to update" })
 

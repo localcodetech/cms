@@ -1,7 +1,7 @@
 // src/api/postApi.js
 import http from "./http";
 
-export const getPublishedPosts = async () => (await http.get("/posts")).data;
+export const getPublishedPosts = async () => (await http.get("/posts/")).data;
 
 
 export const getPublishedPost = async (id) => (await http.get(`/posts/${id}`)).data;
